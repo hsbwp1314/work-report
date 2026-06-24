@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>工作汇报</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f0f7f0;--bg2:#e0efe0;--bg3:#d0e7d0;--card:#ffffff;--border:#a0c8a0;--text:#1a3a1a;--text2:#4a7a4a;--accent:#009a44;--accent2:#00803a;--green:#2e7d32;--yellow:#e6a817;--red:#c62828;--blue:#1565c0;--radius:12px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.header h1 span{color:var(--accent)}
+.tabs{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;position:sticky;top:52px;z-index:99}
+.tab-btn{padding:12px 10px;border:none;background:none;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;flex:1;text-align:center;white-space:nowrap}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.content{padding:16px;max-width:680px;margin:0 auto;padding-bottom:80px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+label{display:block;font-size:13px;color:var(--text2);margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;outline:none;margin-bottom:10px;-webkit-appearance:none}
+textarea{min-height:80px;font-size:16px;resize:vertical;line-height:1.5}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:14px 20px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;min-height:48px;width:100%;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:10px 16px;font-size:14px;min-height:40px;width:auto}
+.btn-success{background:var(--green);color:#fff}
+.btn-group{display:flex;gap:8px}.btn-group .btn{flex:1}
+.empty{text-align:center;padding:40px 16px;color:var(--text2)}
+.empty .icon{font-size:40px;margin-bottom:10px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%)translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;z-index:1000;opacity:0;transition:all .3s;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.toast.show{opacity:1;transform:translateX(-50%)translateY(0)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-done{background:rgba(76,175,125,.2);color:var(--green)}
+.badge-doing{background:rgba(240,168,58,.2);color:var(--yellow)}
+.badge-pending{background:rgba(226,92,92,.2);color:var(--red)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.stat-item .num{font-size:26px;font-weight:700}
+.stat-item .lbl{font-size:12px;color:var(--text2);margin-top:2px}
+.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}.blue{color:var(--blue)}
+.reminder-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:10px;color:var(--text);max-height:280px;overflow-y:auto}
+.rc{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
+.rc .rn{font-size:16px;font-weight:600;margin-bottom:4px}
+.rc .rd{font-size:12px;color:var(--text2);margin-bottom:6px}
+.rc .rt{font-size:15px;line-height:1.6;margin-bottom:6px;color:var(--text)}
+.rc .rm{font-size:12px;color:var(--text2);display:flex;gap:8px;flex-wrap:wrap}
+.rp{background:#fff;color:#222;border-radius:10px;padding:20px;font-size:13px;line-height:1.7;max-height:480px;overflow-y:auto}
+.rp table{border:1px solid #ddd;width:100%;border-collapse:collapse;margin-bottom:12px}
+.rp th,.rp td{border:1px solid #ddd;padding:6px 10px;color:#333;font-size:12px}
+.rp th{background:#f5f5f5}
+.hint{font-size:13px;color:var(--text2);margin:-6px 0 10px;line-height:1.5}
+.sub-card{background:var(--bg3);border-radius:8px;padding:12px;margin-top:10px;font-size:14px;line-height:1.6;color:var(--text2)}
+
+/* Admin toggle */
+.admin-bar{text-align:center;padding:6px;font-size:12px;color:var(--text2);background:var(--bg2);border-bottom:1px solid var(--border);cursor:pointer;position:sticky;top:52px;z-index:98}
+.admin-bar:hover{color:var(--accent)}
+.admin-mode .admin-bar{background:var(--accent);color:#fff}
+.admin-mode .member-only{display:block !important}
+.member-only{display:none !important}
+.admin-mode .member-only-inline{display:inline !important}
+.member-only-inline{display:none !important}
+
+/* Password Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:24px;width:300px;max-width:90vw;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.modal-box h3{font-size:16px;margin-bottom:16px;color:#333}
+.modal-box input{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px;outline:none;margin-bottom:10px;color:#333;background:#fff;text-align:left}
+.modal-box input:focus{border-color:var(--accent)}
+.modal-box .modal-btns{display:flex;gap:8px}
+.modal-box .modal-btns button{flex:1;padding:10px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.modal-box .modal-btns .ok{background:var(--accent);color:#fff}
+.modal-box .modal-btns .cancel{background:#eee;color:#666}
+.modal-box .modal-err{color:var(--red);font-size:13px;margin-top:8px;display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1><span>📋</span> 工作汇报</h1>
+  <span id="modeToggle" onclick="toggleAdmin()" style="font-size:12px;color:var(--accent);cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--accent)">🔒 管理</span>
+</div>
+<div class="admin-bar" onclick="toggleAdmin()" id="adminBar">👆 点这里进入管理模式（需密码）</div>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="checkin">📝 汇报</button>
+  <button class="tab-btn member-only" data-tab="team">👥 名单</button>
+  <button class="tab-btn member-only" data-tab="remind">📢 提醒</button>
+  <button class="tab-btn member-only" data-tab="weekly">📊 周报</button>
+</div>
+<div class="content">
+
+  <!-- ===== 汇报（接龙模式） ===== -->
+  <div class="tab-panel active" id="panel-checkin">
+    <div class="card">
+      <div class="card-title" id="ciTitleDisplay">📝 今日工作汇报</div>
+      <div id="ciTopic" style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6"></div>
+      <label>👤 单位 + 姓名</label>
+      <input type="text" id="ciName" placeholder="如：营业部 张三、投递组 李四" autocomplete="off">
+      <label>📌 今天做了什么？</label>
+      <textarea id="ciContent" placeholder="每行写一个事项，不写标记就是已完成&#10;也可以点下面的 /完成 /进行中 /未开始 按钮&#10;例如：&#10;完成了XX客户拜访&#10;处理投诉工单 /进行中&#10;整理月度报表" style="min-height:80px"></textarea>
+      <div style="font-size:12px;color:var(--text2);margin:-6px 0 6px;line-height:1.5">不写标记 = 默认已完成。每行末尾可加 <code>/</code> 选择状态</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <span class="cmd-chip" onclick="insertCmd('/完成')" style="background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">✅ /完成</span>
+        <span class="cmd-chip" onclick="insertCmd('/进行中')" style="background:var(--yellow);color:#222;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">🔄 /进行中</span>
+        <span class="cmd-chip" onclick="insertCmd('/未开始')" style="background:var(--red);color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">🔴 /未开始</span>
+      </div>
+      <label>💬 备注 <span style="font-weight:400;color:var(--text2)">（可选，遇到的困难、需要的支持）</span></label>
+      <input type="text" id="ciNotes" placeholder="如：需要XX部门配合、遇到XX问题">
+      <button class="btn btn-primary" onclick="doCheckin()">✅ 提交汇报</button>
+      <div style="font-size:12px;color:var(--text2);text-align:center;margin-top:6px">提交后内容会显示在下方列表中，全员可见 <span style="font-size:10px">⏱ 自动刷新</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>📋 汇报进度</span>
+        <span id="ciCount" style="font-size:13px;color:var(--text2)"></span>
+      </div>
+      <div id="ciEntryList" style="font-size:14px;line-height:2.2"><div style="color:var(--text2);padding:12px 0" id="ciEmptyMsg">暂无汇报内容，快来第一个提交吧</div></div>
+    </div>
+    <!-- Member-only: 今日已汇报 -->
+    <div class="card member-only">
+      <div class="card-title">📊 已汇报统计</div>
+      <div id="ciStats" style="font-size:14px;line-height:2"></div>
+      <button class="btn btn-secondary" style="margin-top:8px" onclick="exportCheckin()">📄 导出报表</button>
+    </div>
+    <!-- Admin only: manage -->
+    <div class="card member-only">
+      <div class="card-title">⚙️ 管理设置</div>
+      <label>📌 汇报主题</label>
+      <input type="text" id="ciAdminTitle" value="请报今日各业务完成情况" placeholder="例如：请报今日各业务完成情况">
+      <label>👥 预期参与人数</label>
+      <input type="number" id="ciAdminExpected" value="0" min="0" placeholder="0 = 不限人数">
+      <label>⏰ 截止时间</label>
+      <input type="time" id="ciAdminDeadline" value="17:30">
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="saveCheckinConfig()">💾 保存设置</button>
+        <button class="btn btn-secondary" onclick="endCheckin()" id="endCheckinBtn">⏹️ 结束汇报</button>
+        <button class="btn btn-success" onclick="reopenCheckin()" id="reopenCheckinBtn" style="display:none">🔓 重新开启</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 名单 ===== -->
+  <div class="tab-panel" id="panel-team">
+    <div class="card">
+      <div class="card-title">👥 队员名单</div>
+      <p class="hint">队员第一次汇报时输入姓名，会自动添加到下面的名单里。你什么都不用做。</p>
+      <div id="teamList"></div>
+      <hr style="border-color:var(--border);margin:14px 0">
+      <p class="hint">如果想批量导入微信群的成员名单，可以粘贴到这里（每行一个名字）：</p>
+      <textarea id="batchNames" placeholder="张三&#10;李四&#10;王五" style="min-height:60px"></textarea>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="batchImport()">📥 批量导入</button>
+        <button class="btn btn-secondary" onclick="fillSample()">📋 填入示例</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 提醒 ===== -->
+  <div class="tab-panel" id="panel-remind">
+    <div class="card">
+      <div class="card-title">📢 今日汇报提醒</div>
+      <div class="stats-row" id="rStat"></div>
+      <button class="btn btn-primary" onclick="genRemind()">📢 生成提醒话术</button>
+    </div>
+    <div class="card" id="remindResult" style="display:none">
+      <div class="card-title">📋 复制这段话到微信群</div>
+      <div class="reminder-box" id="remindText"></div>
+      <button class="btn btn-success" onclick="copyText()">📋 一键复制</button>
+    </div>
+    <div class="card">
+      <div class="card-title">💡 使用说明</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">
+        <p>① 把链接发到微信群 → ② 队员点开汇报 → ③ 你每天点「提醒」看谁还没交</p>
+        <p style="margin-top:6px;color:var(--accent)">链接：<span id="siteLink" style="word-break:break-all"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 周报 ===== -->
+  <div class="tab-panel" id="panel-weekly">
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>📊 工作周报</span>
+        <span id="wpPeriod" style="font-size:13px;color:var(--text2)"></span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-sm btn-secondary" onclick="setWeekPeriod('this')" style="flex:1">📅 本周</button>
+        <button class="btn btn-sm btn-secondary" onclick="setWeekPeriod('last')" style="flex:1">📅 上周</button>
+        <button class="btn btn-sm btn-secondary" onclick="setWeekPeriod('all')" style="flex:1">📅 全部</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="genWeekly()">📊 生成对比周报</button>
+        <button class="btn btn-secondary" onclick="exportW()">📄 导出报表</button>
+        <button class="btn btn-secondary" onclick="addSampleData()">📋 示例数据</button>
+      </div>
+    </div>
+    <div class="card">
+      <div id="wPreview" class="rp"><div class="empty"><div class="icon">📄</div><p>点击「生成对比周报」查看排名</p></div></div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- Admin Login Modal -->
+<div class="modal-overlay" id="pwModal">
+  <div class="modal-box">
+    <h3 id="pwModalTitle">🔒 管理员登录</h3>
+    <input type="text" id="loginName" placeholder="管理员姓名" autocomplete="off" style="text-align:center">
+    <input type="password" id="loginPw" placeholder="密码" autocomplete="off" style="text-align:center">
+    <div id="loginServerInfo" style="font-size:11px;color:#999;margin:-6px 0 10px"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closePwModal()">取消</button>
+      <button class="ok" onclick="submitLogin()">登录</button>
+    </div>
+    <div class="modal-err" id="pwError">❌ 用户名或密码错误</div>
+  </div>
+</div>
+
+<script>
+// ====== 数据层（支持服务器 + localStorage 双模式） ======
+const SERVER_URL = window.location.origin; // 自动取当前服务器地址
+let useServer = false;
+let serverChecked = false;
+
+// 检查服务器是否可用
+async function checkServer() {
+  try {
+    const res = await fetch(SERVER_URL + '/api/data');
+    if (res.ok) {
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) { useServer = true; return true; }
+    }
+  } catch {}
+  useServer = false;
+  return false;
+}
+
+// 读取数据
+async function loadData() {
+  if (useServer) {
+    try {
+      const res = await fetch(SERVER_URL + '/api/data');
+      const data = await res.json();
+      return data;
+    } catch { return { checkin: null, members: [] }; }
+  }
+  // localStorage 回退
+  try { return JSON.parse(localStorage.getItem('wrk_server_data')) || { checkin: null, members: [] }; }
+  catch { return { checkin: null, members: [] }; }
+}
+
+// 保存数据
+async function saveData(data) {
+  if (useServer) {
+    try {
+      await fetch(SERVER_URL + '/api/data', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch {}
+  }
+  localStorage.setItem('wrk_server_data', JSON.stringify(data));
+}
+
+// ====== 全局数据 ======
+let STORE = { checkin: null, members: [] };
+async function initData() {
+  serverChecked = true;
+  await checkServer();
+  STORE = await loadData();
+  if (!STORE.checkin) {
+    STORE.checkin = { title:'请报今日各业务完成情况', expected:0, deadline:'17:30', date:'', entries:[], done:false };
+  }
+  if (!STORE.members) STORE.members = [];
+  if (!STORE.history) STORE.history = [];
+  // 显示服务器连接状态
+  const info = document.getElementById('loginServerInfo');
+  if (info) info.textContent = useServer ? '🟢 服务器已连接' : '🔴 本地模式';
+  renderTeam(); renderRemind(); renderCheckin();
+}
+async function syncStore() { await saveData(STORE); }
+
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function td(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fri(){return new Date().getDay()===5}
+function wk(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+3-(d.getDay()+6)%7);const w1=new Date(d.getFullYear(),0,4);return d.getFullYear()+'-W'+String(1+Math.round(((d-w1)/86400000-3+(w1.getDay()+6)%7)/7)).padStart(2,'0')}
+function es(s){const e=document.createElement('div');e.textContent=s;return e.innerHTML}
+let _tt;
+function tt(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),1800)}
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('panel-'+b.dataset.tab).classList.add('active');
+    if(b.dataset.tab==='checkin')renderCheckin();
+    if(b.dataset.tab==='team')renderTeam();
+    if(b.dataset.tab==='remind')renderRemind();
+  })
+});
+
+document.getElementById('siteLink').textContent=window.location.href;
+
+// ====== 管理员登录（支持多管理员） ======
+let isAdmin = false;
+let adminName = '';
+let pwCallback = null;
+
+function openPwModal(title, callback) {
+  document.getElementById('pwModalTitle').textContent = title || '🔒 管理员登录';
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginPw').value = '';
+  document.getElementById('pwError').style.display = 'none';
+  // 显示服务器状态
+  const info = document.getElementById('loginServerInfo');
+  info.textContent = useServer ? '🟢 服务器在线，多人可用' : '🔴 本地模式（数据存本机）';
+  document.getElementById('pwModal').classList.add('show');
+  pwCallback = callback;
+  setTimeout(() => document.getElementById('loginName').focus(), 100);
+}
+
+function closePwModal() {
+  document.getElementById('pwModal').classList.remove('show');
+  pwCallback = null;
+}
+
+async function submitLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  if (!name || !pw) { document.getElementById('pwError').textContent = '请输入用户名和密码'; document.getElementById('pwError').style.display = 'block'; return; }
+  
+  if (useServer) {
+    // 服务端验证
+    try {
+      const res = await fetch(SERVER_URL + '/api/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password: pw })
+      });
+      const result = await res.json();
+      if (result.success) {
+        adminName = result.admin.name;
+        const cb = pwCallback; closePwModal();
+        if (cb) { cb(); tt('🔓 欢迎回来，' + adminName); }
+      } else {
+        document.getElementById('pwError').textContent = '❌ ' + result.error;
+        document.getElementById('pwError').style.display = 'block';
+        document.getElementById('loginPw').value = '';
+        document.getElementById('loginPw').focus();
+      }
+    } catch {
+      document.getElementById('pwError').textContent = '❌ 服务器连接失败';
+      document.getElementById('pwError').style.display = 'block';
+    }
+  } else {
+    // 本地模式：默认管理员 admin123
+    if (pw === 'admin123') {
+      adminName = name || '管理员';
+      const cb = pwCallback; closePwModal();
+      if (cb) { cb(); tt('🔓 已进入管理模式（本地）'); }
+    } else {
+      document.getElementById('pwError').textContent = '❌ 密码错误（本地默认密码：admin123）';
+      document.getElementById('pwError').style.display = 'block';
+      document.getElementById('loginPw').value = '';
+      document.getElementById('loginPw').focus();
+    }
+  }
+}
+
+// Enter key
+document.getElementById('loginName').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('loginPw').focus(); });
+document.getElementById('loginPw').addEventListener('keydown', function(e) { if (e.key === 'Enter') submitLogin(); });
+
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false; adminName = '';
+    document.body.classList.remove('admin-mode');
+    document.getElementById('adminBar').textContent = '👆 点这里进入管理模式';
+    document.getElementById('modeToggle').textContent = '🔒 管理';
+    return;
+  }
+  openPwModal('🔒 管理员登录', function() {
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+    document.getElementById('adminBar').textContent = '🔓 ' + adminName + '（管理模式）';
+    document.getElementById('modeToggle').textContent = '🔓 退出';
+    renderTeam(); renderRemind(); renderCheckin();
+  });
+}
+
+// ====== 汇报（接龙模式 + 斜杠命令 + 备注） ======
+function getCi() { return STORE.checkin || { title:'请报今日各业务完成情况', expected:0, deadline:'17:30', date:'', entries:[], done:false }; }
+function saveCi(ci) { STORE.checkin = ci; syncStore(); }
+
+// Parse slash commands from text
+function parseItems(text) {
+  return text.split('\n').map(s => s.trim()).filter(s => s).map(line => {
+    let status = '已完成'; // 不写标记默认已完成
+    let content = line;
+    const m = line.match(/\/(完成|进行中|未开始)\s*$/);
+    if (m) { status = m[1]; content = line.slice(0, line.lastIndexOf('/')).trim(); }
+    return content ? { content, status } : null;
+  }).filter(Boolean);
+}
+
+// 解析单位名（"营业部 张三" → { unit:"营业部", person:"张三" }）
+function parseUnit(name) {
+  if (!name || typeof name !== 'string') return { unit: '其他', person: name || '' };
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return { unit: parts[0], person: parts.slice(1).join(' ') };
+  return { unit: '未分组', person: name };
+}
+
+// 独立的列表渲染函数（保证不被 date 检查干扰）
+function renderEntryList(entries) {
+  const entryEl = document.getElementById('ciEntryList');
+  const countEl = document.getElementById('ciCount');
+  const list = Array.isArray(entries) ? entries : [];
+  if (!entryEl) return;
+  // 空数据时保留硬编码的"暂无汇报内容"，有数据时渲染
+  if (list.length === 0) {
+    entryEl.innerHTML = '<div style="color:var(--text2);padding:12px 0">暂无汇报内容，快来第一个提交吧</div>';
+  } else {
+    let html = '';
+    let errorItem = '';
+    for (let i = 0; i < list.length; i++) {
+      try {
+        const e = list[i];
+        if (!e || typeof e !== 'object') { errorItem += '条目' + (i+1) + '异常;'; continue; }
+        const its = (e.items && Array.isArray(e.items)) ? e.items : (typeof e.content === 'string' ? parseItems(e.content) : []);
+        let itemStr = '';
+        for (let j = 0; j < its.length; j++) {
+          const it = its[j];
+          if (!it || typeof it !== 'object') continue;
+          const ic = it.status === '已完成' ? '✅' : it.status === '进行中' ? '🔄' : '🔴';
+          itemStr += '<span style="margin-right:6px">' + ic + ' ' + es(typeof it.content === 'string' ? it.content : '') + '</span>';
+        }
+        const noteStr = e.notes ? '<div style="font-size:12px;color:var(--text2);margin-top:2px;padding-left:4px">💬 ' + es(e.notes) + '</div>' : '';
+        html += '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div><strong>' + (i+1) + '. ' + es(typeof e.name === 'string' ? e.name : '') + '</strong></div><div style="padding-left:4px;margin-top:2px">' + itemStr + '</div>' + noteStr + '</div>';
+      } catch(loopErr) { errorItem += '条目' + (i+1) + '渲染出错;'; }
+    }
+    if (html) {
+      entryEl.innerHTML = html;
+    } else if (errorItem) {
+      entryEl.innerHTML = '<div style="color:var(--red);padding:12px 0">' + errorItem + '</div>';
+    } else {
+      // fallback: 显示原始数据用于调试
+      try {
+        entryEl.innerHTML = '<div style="color:#888;font-size:12px;padding:8px">数据异常，原始数据：<br>' + es(JSON.stringify(list[0], null, 1).replace(/\n/g, '<br>')) + '</div>';
+      } catch(fe) {}
+    }
+  }  
+  if (countEl) countEl.textContent = '👥 已参与 ' + list.length + ' 人';
+}
+
+function renderCheckin() {
+  const ci = getCi();
+  if (!ci) return;
+  const today = td();
+  // 日期变化时：先把旧数据存档，再重置
+  if (!ci.date || ci.date !== today) {
+    if (ci.date && ci.entries.length > 0) {
+      if (!STORE.history) STORE.history = [];
+      STORE.history.push({ date: ci.date, title: ci.title, entries: JSON.parse(JSON.stringify(ci.entries)) });
+      // 最多保留 90 天历史
+      if (STORE.history.length > 90) STORE.history = STORE.history.slice(-90);
+    }
+    ci.date = today; ci.entries = []; ci.done = false; saveCi(ci);
+  }
+  document.getElementById('ciTitleDisplay').textContent = '📝 ' + ci.title;
+  const now = new Date();
+  const [h, m] = (ci.deadline || '17:30').split(':').map(Number);
+  const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+  const isPast = now > deadline;
+  const count = ci.entries.length;
+  document.getElementById('ciTopic').innerHTML = '📅 ' + ci.date + ' | ⏰ 截止 ' + ci.deadline + (isPast ? ' <span style="color:var(--red)">(已截止)</span>' : '') + (ci.done ? ' <span style="color:var(--green);font-weight:600"> ✅ 已结束</span>' : '');
+
+  // 切换结束/重新开启按钮
+  const endBtn = document.getElementById('endCheckinBtn');
+  const reopenBtn = document.getElementById('reopenCheckinBtn');
+  if (endBtn && reopenBtn) {
+    endBtn.style.display = ci.done ? 'none' : '';
+    reopenBtn.style.display = ci.done ? '' : 'none';
+  }
+
+  // 使用独立渲染函数
+  renderEntryList(ci.entries);
+
+  // Admin: stats + not participated
+  if (isAdmin) {
+    const all = STORE.members || [];
+    const participants = ci.entries.map(e => e.name);
+    const notIn = all.filter(n => !participants.includes(n));
+    const pct = all.length > 0 ? Math.round(participants.length / all.length * 100) : 0;
+    const sug = pct === 100 ? '🎉 全员参与！' : pct >= 80 ? '👍 大部分已参与' : pct >= 50 ? '📊 参与过半，继续推进' : '⚠️ 参与率偏低，建议提醒';
+    document.getElementById('ciStats').innerHTML =
+      '<p>📝 ' + es(ci.title) + '</p><p>👥 已参与 ' + participants.length + '/' + all.length + ' 人（' + pct + '%）</p><p>💡 ' + sug + '</p>' +
+      (notIn.length > 0 ? '<p style="color:var(--red)">⏳ 未参与：' + notIn.map(esc).join('、') + '</p>' : '<p style="color:var(--green)">✅ 全部参与</p>');
+  }
+}
+
+// 点击按钮插入斜杠命令到文本框
+function insertCmd(cmd) {
+  const ta = document.getElementById('ciContent');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const before = ta.value.substring(0, start);
+  const after = ta.value.substring(end);
+  // Remove any trailing space before inserting
+  const trimmedBefore = before.replace(/ +$/, '');
+  const spacesBefore = before.length - trimmedBefore.length;
+  ta.value = trimmedBefore + ' ' + cmd + after;
+  const newPos = trimmedBefore.length + 1 + cmd.length;
+  ta.selectionStart = ta.selectionEnd = newPos;
+  ta.focus();
+}
+
+function doCheckin() {
+  const name = document.getElementById('ciName').value.trim();
+  const content = document.getElementById('ciContent').value.trim();
+  const notes = document.getElementById('ciNotes').value.trim();
+  if (!name) { tt('请输入姓名'); return; }
+  if (!content) { tt('请填写今天做了什么'); return; }
+  if (!STORE.members.includes(name)) { STORE.members.push(name); syncStore(); }
+  localStorage.setItem('wrk_last_name', name);
+
+  const ci = getCi();
+  // 【关键】先确保日期初始化，否则 renderCheckin 会清空 entries
+  const today = td();
+  if (!ci.date || ci.date !== today) { ci.date = today; ci.entries = []; ci.done = false; }
+  
+  if (ci.done) { tt('汇报已结束'); return; }
+  // 截止时间提醒（仅提示不阻止，除非管理员已结束汇报）
+  const now = new Date();
+  const [h, m] = (ci.deadline || '17:30').split(':').map(Number);
+  const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+  if (now > deadline && !ci.done) {
+    // 超过截止时间但不阻止，仅提示一次
+    if (!localStorage.getItem('wrk_deadline_warned_' + td())) {
+      localStorage.setItem('wrk_deadline_warned_' + td(), '1');
+      tt('⏰ 已过截止时间（' + ci.deadline + '），但仍可提交');
+    }
+  }
+  if (ci.entries.some(e => e.name === name)) { tt('你已提交过了 ✅'); return; }
+
+  // Parse items for status tracking
+  const items = parseItems(content);
+  const doneCount = items.filter(i => i.status === '已完成').length;
+  const totalCount = items.length;
+
+  ci.entries.push({ name, content, notes, items, time: new Date().toISOString() });
+  ci.done = ci.expected > 0 && ci.entries.length >= ci.expected;
+  saveCi(ci);
+  document.getElementById('ciContent').value = '';
+  document.getElementById('ciNotes').value = '';
+  
+  // === 直接操作 DOM 显示新条目 ===
+  const entryEl = document.getElementById('ciEntryList');
+  const countEl = document.getElementById('ciCount');
+  if (entryEl) {
+    let html = ci.entries.map((e, i) => {
+      const its = e.items || parseItems(e.content);
+      const itemStr = its.map(it => {
+        const ic = it.status === '已完成' ? '✅' : it.status === '进行中' ? '🔄' : '🔴';
+        return '<span style="margin-right:6px">' + ic + ' ' + es(it.content) + '</span>';
+      }).join('');
+      const noteStr = e.notes ? '<div style="font-size:12px;color:var(--text2);margin-top:2px;padding-left:4px">💬 ' + es(e.notes) + '</div>' : '';
+      return '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div><strong>' + (i+1) + '. ' + es(e.name) + '</strong></div><div style="padding-left:4px;margin-top:2px">' + itemStr + '</div>' + noteStr + '</div>';
+    }).join('');
+    entryEl.innerHTML = html;
+    // 验证渲染是否成功
+    if (entryEl.children.length === 0 && ci.entries.length > 0) {
+      // fallback: 直接写纯文本
+      entryEl.innerHTML = '<div>' + ci.entries.map((e,i) => (i+1)+'. '+es(e.name)+'：'+es(e.content)).join('<br>') + '</div>';
+    }
+  }
+  if (countEl) countEl.textContent = '👥 已参与 ' + ci.entries.length + ' 人';
+  // 强制可见
+  if (entryEl) entryEl.style.display = '';
+  // 更新标题、统计
+  renderCheckin();
+  tt('✅ 汇报已提交！共 ' + totalCount + ' 项，已完成 ' + doneCount + ' 项' + (ci.done ? ' 目标人数已达成！' : ''));
+}
+
+function saveCheckinConfig() {
+  const title = document.getElementById('ciAdminTitle').value.trim();
+  const expected = parseInt(document.getElementById('ciAdminExpected').value) || 0;
+  const deadline = document.getElementById('ciAdminDeadline').value;
+  const ci = getCi();
+  ci.title = title || '请报今日各业务完成情况';
+  ci.expected = expected;
+  ci.deadline = deadline || '17:30';
+  saveCi(ci);
+  renderCheckin();
+  tt('✅ 设置已保存');
+}
+
+function endCheckin() {
+  if (!confirm('确定结束本次汇报？结束后队员无法再提交。')) return;
+  const ci = getCi(); ci.done = true; saveCi(ci);
+  renderCheckin();
+  tt('⏹️ 汇报已结束');
+}
+
+function reopenCheckin() {
+  if (!confirm('确定重新开启汇报？队员可以继续提交。')) return;
+  const ci = getCi(); ci.done = false;
+  // 重新开启时顺延截止时间到晚上 11:59
+  ci.deadline = '23:59';
+  saveCi(ci);
+  renderCheckin();
+  tt('🔓 汇报已重新开启，截止时间延至 23:59');
+}
+
+function exportCheckin() {
+  const ci = getCi();
+  if (ci.entries.length === 0) { tt('暂无汇报数据'); return; }
+  const now = new Date();
+  const ds = now.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+  const participants = ci.entries.map(e => e.name);
+  const all = STORE.members || [];
+  const notIn = all.filter(n => !participants.includes(n));
+  const pct = all.length > 0 ? Math.round(participants.length / all.length * 100) : 0;
+  let sug = pct === 100 ? '🎉 全员参与，团队协作度高！' : pct >= 80 ? '👍 参与率良好' : pct >= 50 ? '📊 参与过半，建议跟进未参与人员' : '⚠️ 参与率偏低，建议加强沟通';
+  const statuses = ci.entries.map(e => (e.items || parseItems(e.content)).filter(i => i.status === '已完成').length);
+  const totalItems = ci.entries.reduce((s, e) => s + (e.items || parseItems(e.content)).length, 0);
+  const doneItems = statuses.reduce((s, v) => s + v, 0);
+  let h = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>汇报报表</title><style>body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:30px;max-width:680px;margin:0 auto;color:#333}h2{text-align:center}table{width:100%;border-collapse:collapse;margin-bottom:16px}th,td{border:1px solid #ccc;padding:8px 12px;text-align:left;font-size:13px}th{background:#f0f0f0}</style></head><body>';
+  h += '<h2>📝 工作汇报报表</h2><p style="text-align:center;color:#888;margin-bottom:20px">' + es(ci.title) + ' | ' + ds + '</p>';
+  h += '<h3>一、参与情况</h3><table><tr><td style="font-weight:600">参与人数</td><td>' + participants.length + '/' + all.length + '（' + pct + '%）</td></tr><tr><td style="font-weight:600">事项总数</td><td>' + totalItems + '</td></tr><tr><td style="font-weight:600">已完成</td><td>' + doneItems + '（' + (totalItems > 0 ? Math.round(doneItems/totalItems*100) : 0) + '%）</td></tr></table>';
+  h += '<h3>二、汇报内容</h3><table><thead><tr><th>序号</th><th>姓名</th><th>内容</th><th>备注</th></tr></thead><tbody>';
+  ci.entries.forEach((e, i) => {
+    const items = e.items || parseItems(e.content);
+    const itemStr = items.map(it => { const ic = it.status === '已完成' ? '✅' : it.status === '进行中' ? '🔄' : '🔴'; return ic + ' ' + it.content; }).join('<br>');
+    h += '<tr><td>' + (i+1) + '</td><td><strong>' + es(e.name) + '</strong></td><td>' + itemStr + '</td><td>' + (e.notes ? es(e.notes) : '—') + '</td></tr>';
+  });
+  h += '</tbody></table>';
+  if (notIn.length > 0) h += '<h3>三、未参与人员</h3><p style="color:#c62828">' + notIn.map(esc).join('、') + '</p>';
+  h += '<h3>四、总结</h3><p style="background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:12px;font-size:14px;line-height:1.8">' + sug + '</p>';
+  h += '<p style="text-align:right;color:#bbb;font-size:11px;margin-top:20px;font-style:italic">— 自动生成于工作汇报系统</p></body></html>';
+  const b = new Blob([h], {type:'text/html'}); const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href = u; a.download = '汇报报表_' + td() + '.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u);
+  tt('📄 报表已导出');
+}
+
+// ====== 名单 ======
+function renderTeam(){
+  const el=document.getElementById('teamList');
+  if(!STORE.members||STORE.members.length===0){el.innerHTML='<div class="empty"><p>暂无队员，队员第一次汇报时会自动注册</p></div>';return}
+  el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:8px">共 '+STORE.members.length+' 人：</div>'+
+    STORE.members.map(n=>'<span style="background:var(--bg3);padding:4px 12px;border-radius:20px;font-size:13px;border:1px solid var(--border);display:inline-flex;align-items:center;gap:4px;margin:3px">'+es(n)+'<span onclick="delM(\''+es(n)+'\')" style="cursor:pointer;color:var(--red);margin-left:2px">&times;</span></span>').join('');
+}
+
+function delM(n){
+  if(!confirm('移除 '+n+'？'))return;
+  STORE.members=STORE.members.filter(x=>x!==n);syncStore;renderTeam();
+}
+
+function batchImport(){
+  const t=document.getElementById('batchNames').value.trim();
+  if(!t)return tt('请粘贴名单');
+  const names=t.split('\n').map(s=>s.trim()).filter(s=>s);
+  let a=0;
+  names.forEach(n=>{if(n&&!STORE.members.includes(n)){STORE.members.push(n);a++}});
+  syncStore;document.getElementById('batchNames').value='';renderTeam();
+  tt('✅ 导入 '+a+' 人'+(names.length-a>0?'（'+ (names.length-a)+'人已存在）':''));
+}
+
+function fillSample(){document.getElementById('batchNames').value='张三\n李四\n王五\n赵六\n钱七';tt('示例已填入，点导入即可')}
+
+// ====== 提醒（基于汇报数据） ======
+function renderRemind(){
+  const ci = getCi();
+  const done = ci.entries.map(e => e.name);
+  const pend = STORE.members.filter(m => !done.includes(m));
+  document.getElementById('rStat').innerHTML=
+    '<div class="stat-item"><div class="num blue">'+STORE.members.length+'</div><div class="lbl">总人数</div></div>'+
+    '<div class="stat-item"><div class="num green">'+done.length+'</div><div class="lbl">已汇报</div></div>'+
+    '<div class="stat-item"><div class="num '+(pend.length>0?'red':'green')+'">'+pend.length+'</div><div class="lbl">未汇报</div></div>';
+}
+
+function genRemind(){
+  const ci = getCi();
+  const done = ci.entries.map(e => e.name);
+  const pend = STORE.members.filter(m => !done.includes(m));
+  let txt='📋【今日工作汇报提醒】\n各位同事好，请于今日下班前提交今天的工作汇报。\n\n';
+  if(done.length>0){
+    txt+='✅ 已汇报：\n';
+    ci.entries.forEach(e => { txt+='  '+e.name+'：'+e.content.split('\n')[0]+'\n'; });
+    txt+='\n';
+  }
+  if(pend.length>0){txt+='⏳ 还未汇报：\n';pend.forEach(n=>txt+='  · '+n+'\n');txt+='\n'}
+  txt+='请点击链接提交汇报：'+window.location.href+'\n截止时间：'+ci.deadline+'\n';
+  if(fri())txt+='\n⚠️ 今天周五，下班后将汇总周报。请务必 '+ci.deadline+' 前提交！';
+  document.getElementById('remindText').textContent=txt;
+  document.getElementById('remindResult').style.display='block';
+  tt('📢 提醒已生成');
+}
+
+function copyText(){
+  const t=document.getElementById('remindText').textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>tt('✅ 已复制'))}
+  else{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);tt('✅ 已复制')}
+}
+
+// ====== 周报（单位+个人排名对比） ======
+let weeklyPeriod = 'this'; // 'this' | 'last' | 'all'
+
+// 获取周一的日期
+function getMonday(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  d.setDate(d.getDate() - d.getDay() + 1);
+  return d.toISOString().slice(0,10);
+}
+function getSunday(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  d.setDate(d.getDate() - d.getDay() + 7);
+  return d.toISOString().slice(0,10);
+}
+
+function setWeekPeriod(type) {
+  weeklyPeriod = type;
+  document.getElementById('wpPeriod').textContent = type === 'this' ? '本周' : type === 'last' ? '上周' : '全部历史';
+  genWeekly();
+}
+
+// 收集指定时间段的所有条目（从 history + 当前）
+function collectEntries(period) {
+  const ci = getCi();
+  const today = td();
+  let startDate, endDate;
+  if (period === 'this') {
+    startDate = getMonday();
+    endDate = getSunday();
+  } else if (period === 'last') {
+    const lastMon = new Date(getMonday());
+    lastMon.setDate(lastMon.getDate() - 7);
+    startDate = lastMon.toISOString().slice(0,10);
+    const lastSun = new Date(getSunday());
+    lastSun.setDate(lastSun.getDate() - 7);
+    endDate = lastSun.toISOString().slice(0,10);
+  } else {
+    startDate = '2000-01-01';
+    endDate = '2099-12-31';
+  }
+
+  let allEntries = [];
+  // 从当前 checkin 收集
+  if (ci.entries && ci.entries.length > 0 && ci.date >= startDate && ci.date <= endDate) {
+    allEntries = allEntries.concat(ci.entries.map(e => ({ ...e, reportDate: ci.date, reportTitle: ci.title })));
+  }
+  // 从 history 收集
+  if (STORE.history) {
+    STORE.history.forEach(h => {
+      if (h.date >= startDate && h.date <= endDate && h.entries) {
+        allEntries = allEntries.concat(h.entries.map(e => ({ ...e, reportDate: h.date, reportTitle: h.title })));
+      }
+    });
+  }
+  return allEntries;
+}
+
+function genWeekly(){
+  const entries = collectEntries(weeklyPeriod);
+  const now = new Date();
+  const ds = now.toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric'});
+  const periodLabel = weeklyPeriod === 'this' ? '本周' : weeklyPeriod === 'last' ? '上周' : '全部历史';
+  
+  if (entries.length === 0) {
+    document.getElementById('wPreview').innerHTML = '<div class="empty"><div class="icon">📭</div><p>所选时段暂无汇报数据</p></div>';
+    window._wh = '';
+    tt('暂无数据');
+    return;
+  }
+
+  // 解析单位和个人的完成情况
+  const unitMap = {};
+  const personMap = {};
+  
+  entries.forEach(e => {
+    const items = e.items || parseItems(e.content || '');
+    const { unit, person } = parseUnit(e.name);
+    
+    // 按单位统计
+    if (!unitMap[unit]) unitMap[unit] = { name: unit, items: 0, done: 0, persons: new Set() };
+    unitMap[unit].items += items.length;
+    unitMap[unit].done += items.filter(i => i.status === '已完成').length;
+    unitMap[unit].persons.add(person);
+    
+    // 按个人统计
+    const key = e.name;
+    if (!personMap[key]) personMap[key] = { name: e.name, unit, items: 0, done: 0, dates: new Set() };
+    personMap[key].items += items.length;
+    personMap[key].done += items.filter(i => i.status === '已完成').length;
+    personMap[key].dates.add(e.reportDate || '');
+  });
+
+  // 转数组并排序（完成率从高到低）
+  const units = Object.values(unitMap).map(u => ({
+    ...u,
+    rate: u.items > 0 ? Math.round(u.done / u.items * 100) : 0,
+    persons: u.persons.size
+  })).sort((a, b) => b.rate - a.rate || b.items - a.items);
+
+  const persons = Object.values(personMap).map(p => ({
+    ...p,
+    rate: p.items > 0 ? Math.round(p.done / p.items * 100) : 0,
+    days: p.dates.size
+  })).sort((a, b) => b.rate - a.rate || b.items - a.items);
+
+  // 生成周报 HTML
+  const totalItems = entries.reduce((s, e) => s + (e.items || parseItems(e.content || '')).length, 0);
+  const totalDone = entries.reduce((s, e) => {
+    const items = e.items || parseItems(e.content || '');
+    return s + items.filter(i => i.status === '已完成').length;
+  }, 0);
+  const totalRate = totalItems > 0 ? Math.round(totalDone / totalItems * 100) : 0;
+
+  let html = '<div style="max-width:680px;margin:0 auto">' +
+    '<h2 style="text-align:center;margin-bottom:4px;font-size:18px;color:#222">工作对比周报</h2>' +
+    '<p style="text-align:center;color:#888;margin-bottom:16px;font-size:12px">' + periodLabel + ' | 生成：' + ds + '</p>' +
+    '<h3 style="font-size:14px;margin-bottom:8px;color:#444">一、总体概况</h3>' +
+    '<table><tr><td style="font-weight:600;width:100px">事项总数</td><td>' + totalItems + '</td></tr>' +
+    '<tr><td style="font-weight:600">已完成</td><td style="color:#4caf7d">' + totalDone + '（' + totalRate + '%）</td></tr>' +
+    '<tr><td style="font-weight:600">汇报人次</td><td>' + entries.length + '</td></tr></table>';
+
+  // 单位排名
+  html += '<h3 style="font-size:14px;margin:16px 0 8px;color:#444">二、单位排名</h3>' +
+    '<table><thead><tr><th>排名</th><th>单位</th><th>人数</th><th>事项</th><th>完成</th><th>完成率</th></tr></thead><tbody>';
+  
+  // 找到完成率最高的单位来确定奖牌颜色
+  const maxRate = units.length > 0 ? units[0].rate : 0;
+  units.forEach((u, i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+    const rateColor = u.rate >= 80 ? '#4caf7d' : u.rate >= 50 ? '#e6a817' : '#c62828';
+    html += '<tr><td>' + (medal || (i+1)) + '</td><td><strong>' + es(u.name) + '</strong></td><td>' + u.persons + '</td><td>' + u.items + '</td><td>' + u.done + '</td><td style="color:' + rateColor + ';font-weight:600">' + u.rate + '%</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  // 个人排名
+  html += '<h3 style="font-size:14px;margin:16px 0 8px;color:#444">三、个人排名</h3>' +
+    '<table><thead><tr><th>排名</th><th>姓名</th><th>单位</th><th>天数</th><th>事项</th><th>完成</th><th>完成率</th></tr></thead><tbody>';
+  persons.forEach((p, i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+    const rateColor = p.rate >= 80 ? '#4caf7d' : p.rate >= 50 ? '#e6a817' : '#c62828';
+    html += '<tr><td>' + (medal || (i+1)) + '</td><td><strong>' + es(p.name) + '</strong></td><td>' + es(p.unit) + '</td><td>' + p.days + '</td><td>' + p.items + '</td><td>' + p.done + '</td><td style="color:' + rateColor + ';font-weight:600">' + p.rate + '%</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  // 详细汇报
+  html += '<h3 style="font-size:14px;margin:16px 0 8px;color:#444">四、详细汇报内容</h3>';
+  const sortedByDate = [...entries].sort((a, b) => (a.reportDate || '').localeCompare(b.reportDate || ''));
+  let lastDate = '';
+  sortedByDate.forEach(e => {
+    if (e.reportDate !== lastDate) {
+      html += '<p style="font-size:13px;font-weight:600;margin:8px 0 4px;color:#555">📅 ' + e.reportDate + '</p>';
+      lastDate = e.reportDate;
+    }
+    const items = e.items || parseItems(e.content || '');
+    const itemStr = items.map(it => {
+      const ic = it.status === '已完成' ? '✅' : it.status === '进行中' ? '🔄' : '🔴';
+      return ic + ' ' + es(it.content);
+    }).join('<br>');
+    html += '<p style="font-size:12px;color:#666;margin:2px 0 2px 12px">' + es(e.name) + '：' + itemStr + (e.notes ? ' 💬' + es(e.notes) : '') + '</p>';
+  });
+
+  // 评语
+  let sug = '';
+  if (totalRate >= 90) sug = '🎉 整体完成率很高，表现优秀！';
+  else if (totalRate >= 70) sug = '👍 完成情况良好，个别单位建议关注。';
+  else if (totalRate >= 50) sug = '📊 完成率一般，建议关注排名靠后的单位。';
+  else sug = '⚠️ 完成率偏低，建议召开进度会。';
+  if (units.length > 0) {
+    const topUnit = units[0];
+    const bottomUnit = units[units.length - 1];
+    sug += '\n\n🥇 最佳单位：' + topUnit.name + '（' + topUnit.rate + '%）';
+    if (bottomUnit.rate < topUnit.rate) sug += '\n⚠️ 需提升：' + bottomUnit.name + '（' + bottomUnit.rate + '%）';
+  }
+
+  html += '<h3 style="font-size:14px;margin:16px 0 8px;color:#444">五、总结建议</h3>' +
+    '<div style="background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#555;line-height:1.8;white-space:pre-wrap">' + sug + '</div>' +
+    '<p style="text-align:right;color:#bbb;font-size:11px;font-style:italic">— 自动生成于工作汇报系统</p></div>';
+
+  document.getElementById('wPreview').innerHTML = html;
+  window._wh = html;
+  tt('📊 对比周报已生成');
+}
+
+function exportW(){
+  const h = window._wh;
+  if (!h) { tt('请先生成周报'); return; }
+  const periodLabel = weeklyPeriod === 'this' ? '本周' : weeklyPeriod === 'last' ? '上周' : '全部历史';
+  const f = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>对比周报 ' + periodLabel + '</title><style>body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:30px;max-width:680px;margin:0 auto;color:#333;background:#fff}h2{text-align:center}table{width:100%;border-collapse:collapse;margin-bottom:12px}th,td{border:1px solid #ccc;padding:6px 10px;text-align:left;font-size:12px}th{background:#f0f0f0}@media print{body{padding:20px}}</style></head><body>' + h + '</body></html>';
+  const b = new Blob([f], {type:'text/html'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = '对比周报_' + periodLabel + '_' + td() + '.html';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(u);
+  tt('📄 已下载');
+}
+
+function addSampleData(){
+  const ci = getCi();
+  // 先确保日期已初始化
+  const today = td();
+  if (!ci.date || ci.date !== today) { ci.date = today; ci.entries = []; ci.done = false; }
+
+  // 跨多天、多单位的示例数据
+  const days = [];
+  const d = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const dd = new Date(d);
+    dd.setDate(dd.getDate() - i);
+    days.push(dd.toISOString().slice(0,10));
+  }
+
+  const people = [
+    { name: '营业部 张三', samples: ['完成XX客户拜访 /完成','处理投诉工单 /进行中','整理月度报表 /完成'] },
+    { name: '营业部 李四', samples: ['签约新客户2单 /完成','数据分析 /完成','参加培训 /进行中'] },
+    { name: '投递组 王五', samples: ['维护老客户 /完成','准备方案 /进行中'] },
+    { name: '投递组 赵六', samples: ['邮件营销 /完成','客户回访 /完成','报表汇总 /未开始'] },
+    { name: '财务部 钱七', samples: ['月度结算 /完成','税务申报'] }
+  ];
+
+  let c = 0;
+  people.forEach((p, pi) => {
+    const uname = p.name;
+    days.forEach((day, di) => {
+      const content = p.samples[di % p.samples.length] + '\n日常工作 /完成';
+      const items = parseItems(content);
+      // 只加入当天或 history
+      if (day === today) {
+        if (!ci.entries.some(e => e.name === uname && e.d === day)) {
+          ci.entries.push({ name: uname, content, items, notes: '', time: day + 'T17:00:00' });
+          c++;
+        }
+      } else {
+        // 放入 history
+        if (!STORE.history) STORE.history = [];
+        let h = STORE.history.find(x => x.date === day);
+        if (!h) {
+          h = { date: day, title: '请报今日各业务完成情况', entries: [] };
+          STORE.history.push(h);
+        }
+        if (!h.entries.some(e => e.name === uname)) {
+          h.entries.push({ name: uname, content, items, notes: '', time: day + 'T17:00:00' });
+          c++;
+        }
+      }
+    });
+    if (!STORE.members.includes(uname)) STORE.members.push(uname);
+  });
+
+  saveCi(ci);
+  renderTeam();
+  tt('✅ 已添加 ' + c + ' 条多日示例数据，点「生成对比周报」查看排名');
+}
+
+// ====== INIT ======
+const lastName = localStorage.getItem('wrk_last_name');
+if (lastName) document.getElementById('ciName').value = lastName;
+
+// 初始化数据
+initData().then(() => {
+  // 自动刷新：每 5 秒重新加载数据并刷新列表
+  setInterval(async () => {
+    if (useServer) {
+      STORE = await loadData();
+      if (!STORE.checkin) STORE.checkin = { title:'请报今日各业务完成情况', expected:0, deadline:'17:30', date:'', entries:[], done:false };
+      if (!STORE.members) STORE.members = [];
+    }
+    renderCheckin();
+    renderRemind();
+  }, 5000);
+});
+</script>
+</body>
+</html>

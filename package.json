@@ -1,0 +1,9 @@
+{
+  "name": "work-report",
+  "version": "1.0.0",
+  "description": "工作汇报系统",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
