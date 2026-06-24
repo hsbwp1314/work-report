@@ -1,67 +1,22 @@
 {
-  "checkin": {
-    "title": "请报今日各业务完成情况",
-    "expected": 0,
-    "deadline": "17:30",
-    "date": "2026-06-24",
-    "entries": [
-      {
-        "name": "营业部黄",
-        "content": "揽收包裹120件 /完成\n拜访客户20户\n意向资产30万 /完成",
-        "notes": "要人力支持",
-        "items": [
-          {
-            "content": "揽收包裹120件",
-            "status": "完成"
-          },
-          {
-            "content": "拜访客户20户",
-            "status": "已完成"
-          },
-          {
-            "content": "意向资产30万",
-            "status": "完成"
-          }
-        ],
-        "time": "2026-06-24T04:17:34.144Z"
-      },
-      {
-        "name": "投递组李四",
-        "content": "投包裹30 /完成\n拜访客户50 /进行中\n揽收50 /未开始",
-        "notes": "支持",
-        "items": [
-          {
-            "content": "投包裹30",
-            "status": "完成"
-          },
-          {
-            "content": "拜访客户50",
-            "status": "进行中"
-          },
-          {
-            "content": "揽收50",
-            "status": "未开始"
-          }
-        ],
-        "time": "2026-06-24T04:31:47.662Z"
-      }
-    ],
-    "done": false
-  },
+  "admins": [
+    {
+      "name": "黄世斌",
+      "account": "15773111456",
+      "password": "123456"
+    },
+    {
+      "name": "黄世斌",
+      "account": "admin",
+      "password": "123456"
+    }
+  ],
   "members": [
     "营业部黄",
     "渠道平台部黄世斌",
     "投递组李四"
   ],
   "history": [],
-  "reports": [],
-  "admins": [
-    {
-      "name": "黄世斌",
-      "account": "15773111456",
-      "password": "123456"
-    }
-  ],
   "logs": [
     {
       "type": "register",
@@ -74,6 +29,13 @@
       "name": "黄世斌",
       "detail": "登录系统",
       "time": "2026-06-24T05:55:12.376Z"
+    },
+    {
+      "type": "register",
+      "name": "黄世斌",
+      "detail": "注册了管理员账号",
+      "time": "2026-06-24T12:50:37.281Z"
     }
-  ]
+  ],
+  "reports": []
 }
