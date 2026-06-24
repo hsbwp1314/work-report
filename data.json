@@ -9,11 +9,6 @@
       "name": "黄世斌",
       "account": "admin",
       "password": "123456"
-    },
-    {
-      "name": "市场部李波",
-      "account": "libo",
-      "password": "123456"
     }
   ],
   "members": [
@@ -612,6 +607,12 @@
       "name": "市场部李波",
       "detail": "登录系统",
       "time": "2026-06-24T12:59:21.560Z"
+    },
+    {
+      "type": "admin_del",
+      "name": "市场部李波",
+      "detail": "删除了管理员账号 libo",
+      "time": "2026-06-24T12:59:34.893Z"
     }
   ],
   "reports": [
