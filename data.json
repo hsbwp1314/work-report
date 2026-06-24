@@ -41,7 +41,24 @@
       "name": "黄世斌",
       "detail": "登录系统",
       "time": "2026-06-24T12:51:18.356Z"
+    },
+    {
+      "type": "report_create",
+      "name": "黄世斌",
+      "detail": "创建了汇报「今日工作汇报」",
+      "time": "2026-06-24T12:51:48.948Z"
     }
   ],
-  "reports": []
+  "reports": [
+    {
+      "id": "mqs2ok7oubz",
+      "title": "今日工作汇报",
+      "owner": "黄世斌",
+      "accessCode": "888888",
+      "deadline": "22:30",
+      "date": "2026-06-24",
+      "entries": [],
+      "done": false
+    }
+  ]
 }
