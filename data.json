@@ -5,7 +5,7 @@
       "title": "今日工作汇报",
       "owner": "黄世斌",
       "accessCode": "888888",
-      "deadline": "22:30",
+      "deadline": "23:59",
       "date": "2026-06-28",
       "entries": [
         {
@@ -161,7 +161,7 @@
           "time": "2026-06-24T13:42:48.938Z"
         }
       ],
-      "done": true
+      "done": false
     }
   ],
   "admins": [
