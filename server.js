@@ -17,7 +17,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3456;
+const PORT = 3456;
 const DIR = __dirname;
 const HTML_FILE = path.join(DIR, 'daily-report.html');
 const DATA_FILE = path.join(DIR, 'data.json');
@@ -25,7 +25,7 @@ const ADMINS_FILE = path.join(DIR, 'admins.json');
 
 // ====== 初始化数据文件 ======
 if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, JSON.stringify({ checkin: null, members: [] }), 'utf-8');
-if (!fs.existsSync(ADMINS_FILE)) fs.writeFileSync(ADMINS_FILE, JSON.stringify({ admins: [{ name: '管理员', password: 'admin123' }] }), 'utf-8');
+if (!fs.existsSync(ADMINS_FILE)) fs.writeFileSync(ADMINS_FILE, JSON.stringify({ admins: [{ name: '管理员', password: 'admin123', isSuperAdmin: true }] }), 'utf-8');
 
 // ====== 工具函数 ======
 function readJSON(file) {
@@ -84,6 +84,14 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ====== API: 获取管理员列表（用于前端判断是否需要注册） ======
+  if (pathname === '/api/admins' && req.method === 'GET') {
+    const data = readJSON(ADMINS_FILE);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(data));
+    return;
+  }
+
   // ====== API: 获取数据 ======
   if (pathname === '/api/data' && req.method === 'GET') {
     const data = readJSON(DATA_FILE);
@@ -118,7 +126,10 @@ const server = http.createServer((req, res) => {
     else {
       const ext = path.extname(filePath);
       const mime = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json' };
-      res.writeHead(200, { 'Content-Type': mime[ext] || 'application/octet-stream' });
+      const headers = { 'Content-Type': mime[ext] || 'application/octet-stream' };
+      // HTML 文件禁用缓存，确保前端代码即时生效
+      if (ext === '.html') headers['Cache-Control'] = 'no-store, must-revalidate';
+      res.writeHead(200, headers);
       res.end(content);
     }
   });
