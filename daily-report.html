@@ -1036,14 +1036,17 @@ function doCheckin() {
 }
 
 function saveCheckinConfig() {
-  // 如果 activeReportId 为空，自动选当前管理员的第一个汇报
-  if (!activeReportId && currentAdmin) {
-    const first = STORE.reports.find(r => !r.done && r.owner === currentAdmin.name);
-    if (first) { activeReportId = first.id; switchReport(first.id); }
-  }
   const title = document.getElementById('ciAdminTitle').value.trim();
   const deadline = document.getElementById('ciAdminDeadline').value;
-  const ci = getCi();
+  // 多级查找当前汇报：优先 activeReportId，其次按管理员姓名匹配
+  let ci = getCi();
+  if (!ci || !ci.id) {
+    if (currentAdmin) {
+      // 如果 activeReportId 无效但当前管理员有汇报，直接取第一个
+      ci = STORE.reports.find(r => !r.done && r.owner === currentAdmin.name);
+      if (ci) activeReportId = ci.id;
+    }
+  }
   if (!ci || !ci.id) { tt('请先选择汇报'); return; }
   ci.title = title || ci.title;
   ci.deadline = deadline || ci.deadline;
